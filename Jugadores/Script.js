@@ -23,4 +23,4 @@ document.addEventListener("DOMContentLoaded", function() {
     } else {
         console.error('No se encontró el contenedor con el ID "contenido".');
     }
-});
+}); 
