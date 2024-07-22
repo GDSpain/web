@@ -23,4 +23,17 @@ document.addEventListener("DOMContentLoaded", function() {
     } else {
         console.error('No se encontró el contenedor con el ID "contenido".');
     }
-}); 
+
+    // Guardar la posición de desplazamiento antes de abandonar la página
+    window.addEventListener('beforeunload', function() {
+        localStorage.setItem('scrollPosition', window.scrollY);
+    });
+
+    // Recuperar y aplicar la posición de desplazamiento al cargar la página
+    window.addEventListener('load', function() {
+        const scrollPosition = localStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition, 10));
+        }
+    });
+});
