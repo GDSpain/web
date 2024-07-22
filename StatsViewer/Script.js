@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const contenedor = document.getElementById('Contenido');
-    
+
     function cargarContenido(url, elemento) {
         fetch(url)
             .then(response => {
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (contenedor) {
         cargarContenido('Contenido.html', contenedor);
     } else {
-        console.error('No se encontró el contenedor con el ID "contenido".');
+        console.error('No se encontró el contenedor con el ID "Contenido".');
     }
 
     // Guardar la posición de desplazamiento antes de abandonar la página
@@ -44,8 +44,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 localStorage.setItem('scrollPosition', window.scrollY);
                 cargarContenido(url, contenedor);
                 // Actualizar la URL sin recargar la página
-                window.history.pushState({}, '', url);
+                window.history.pushState({ path: url }, '', url);
             }
         });
     });
+
+    // Manejar el evento popstate para la navegación del historial
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.path) {
+            cargarContenido(event.state.path, contenedor);
+        }
+    });
+
+    // Recuperar y aplicar la posición de desplazamiento al cargar la página
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition, 10));
+    }
 });
