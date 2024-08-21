@@ -1,41 +1,41 @@
-/**
- * Numbers of decimal digits to round to
- */
-const scale = 3;
+const scale = 2;
 
 /**
- * Calculate the score awarded when having a certain percentage on a list level
- * @param {Number} rank Position on the list
- * @param {Number} percent Percentage of completion
- * @param {Number} minPercent Minimum percentage required
+ * Calcula la puntuación basada en la posición y el porcentaje de completitud
+ * @param {Number} rank Posición en la lista (de 1 a 212)
+ * @param {Number} percent Porcentaje de completitud
+ * @param {Number} minPercent Porcentaje mínimo requerido para obtener una puntuación
  * @returns {Number}
  */
 export function score(rank, percent, minPercent) {
-    if (rank > 150) {
-        return 0;
-    }
-    if (rank > 75 && percent < 100) {
+    if (rank > 212) {
         return 0;
     }
 
-    // Old formula
-    /*
-    let score = (100 / Math.sqrt((rank - 1) / 50 + 0.444444) - 50) *
-        ((percent - (minPercent - 1)) / (100 - (minPercent - 1)));
-    */
-    // New formula
-    let score = (-24.9975*Math.pow(rank-1, 0.4) + 200) *
-        ((percent - (minPercent - 1)) / (100 - (minPercent - 1)));
+    let score = 0;
+
+    if (rank >= 1 && rank <= 75) {
+        score = 350 - (rank - 1) * 4.18;
+    } else if (rank >= 76 && rank <= 212) {
+        score = 39.93 - (rank - 76) * 0.286;
+    }
 
     score = Math.max(0, score);
 
-    if (percent != 100) {
-        return round(score - score / 3);
+    if (percent == 100) {
+        return round(score);
+    } else if (percent >= minPercent) {
+        return round(0.5 * score * (percent - minPercent) / (100 - minPercent) + 0.25 * score);
+    } else {
+        return 0;
     }
-
-    return Math.max(round(score), 0);
 }
 
+/**
+ * Redondea un número a un número específico de decimales
+ * @param {Number} num Número a redondear
+ * @returns {Number} Número redondeado a la cantidad de decimales especificada por scale
+ */
 export function round(num) {
     if (!('' + num).includes('e')) {
         return +(Math.round(num + 'e+' + scale) + 'e-' + scale);
